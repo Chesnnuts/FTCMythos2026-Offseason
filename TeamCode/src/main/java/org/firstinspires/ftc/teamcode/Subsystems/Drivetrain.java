@@ -15,6 +15,7 @@ import org.firstinspires.ftc.library.hardware.motors.MotorEx;
 import org.firstinspires.ftc.library.math.geometry.Pose2d;
 import org.firstinspires.ftc.library.math.geometry.Rotation2d;
 import org.firstinspires.ftc.teamcode.constants.DrivetrainConstants;
+import org.firstinspires.ftc.teamcode.pedropathing.Constants;
 
 public class Drivetrain extends SubsystemBase {
 
@@ -36,10 +37,10 @@ public class Drivetrain extends SubsystemBase {
 
     public Drivetrain(HardwareMap hMap, TelemetryManager telemetryM) {
 
-        rightFront = hMap.get(MotorEx.class, DrivetrainConstants.fRMotorID);
-        leftFront = hMap.get(MotorEx.class, DrivetrainConstants.fLMotorID);
-        rightRear = hMap.get(MotorEx.class, DrivetrainConstants.bRMotorID);
-        leftRear = hMap.get(MotorEx.class, DrivetrainConstants.bLMotorID);
+        rightFront = hMap.get(MotorEx.class, DrivetrainConstants.kFrontRightMotorID);
+        leftFront = hMap.get(MotorEx.class, DrivetrainConstants.kFrontLeftMotorID);
+        rightRear = hMap.get(MotorEx.class, DrivetrainConstants.kBackRightMotorID);
+        leftRear = hMap.get(MotorEx.class, DrivetrainConstants.kBackLeftMotorID);
 
         rightFront.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         leftFront.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
@@ -56,22 +57,19 @@ public class Drivetrain extends SubsystemBase {
         rightRear.setInverted(true);
         leftRear.setInverted(true);
 
-        follower = new Follower(hMap);
+        follower = Constants.createFollower(hMap);
 
         initializeImu(hMap);
         this.telemetryM = telemetryM;
-
-
     }
-
         public void initializeImu(HardwareMap hardwareMap) {
-        imu = hardwareMap.get(IMU.class, "imu");
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
-        ));
+            imu = hardwareMap.get(IMU.class, "imu");
+            IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                    RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                    RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
+            ));
 
-        imu.initialize(parameters);
+            imu.initialize(parameters);
         }
 
         public Pose2d getPose() {
@@ -80,27 +78,9 @@ public class Drivetrain extends SubsystemBase {
 
         @Override
     public void periodic() {
-            telemetryM.addData(DrivetrainConstants.kSubsystemName + "Pose X", getPose().getX());
+                telemetryM.addData(DrivetrainConstants.kSubsystemName + "Pose X", getPose().getX());
             telemetryM.addData(DrivetrainConstants.kSubsystemName + "Pose Y", getPose().getY());
-            telemetryM.addData(DrivetrainConstants.kSubsystemName + "Pose 0", getPose().getRotation());
-        }
-
-        public void drive(double xSpeedInchesPerSecond, double ySpeedInchesPerSecond, double omegaSpeedRadiansPerSecond){
-            double scaledForward = xSpeedInchesPerSecond / DrivetrainConstants.kMaximumLinearVelocityInchesPerSecond;
-            double scaledStrafe = ySpeedInchesPerSecond / DrivetrainConstants.kMaximumLinearVelocityInchesPerSecond;
-            double scaledRotation = omegaSpeedRadiansPerSecond / DrivetrainConstants.kMaximumRotationRadiansPerSecond;
-
-            double[] chassisSpeeds = new double[] {
-                    (scaledForward - scaledRotation - scaledStrafe),
-                    (scaledForward + scaledRotation + scaledStrafe),
-                    (scaledForward - scaledRotation + scaledStrafe),
-                    (scaledForward + scaledRotation - scaledStrafe)
-            };
-
-            rightFront.set(chassisSpeeds[0]);
-            leftFront.set(chassisSpeeds[1]);
-            rightRear.set(chassisSpeeds[2]);
-            leftRear.set(chassisSpeeds[3]);
+            telemetryM.addData(DrivetrainConstants.kSubsystemName + "Pose 0", getPose().getRotation().getDegrees());
         }
 
         public void startTeleopDriving(){follower.startTeleopDrive(true);}
@@ -117,7 +97,6 @@ public class Drivetrain extends SubsystemBase {
 
         public void resetDriveSpeed() {
         follower.setTeleOpDrive(0, 0, 0, false);
-        drive(0, 0, 0);
         }
 
         public void resetPose(Pose2d pose){follower.setPose(pose.getAsPedroPose());}
