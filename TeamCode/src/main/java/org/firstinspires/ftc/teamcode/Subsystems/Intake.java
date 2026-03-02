@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.library.command.Command;
 import org.firstinspires.ftc.library.command.CommandBase;
+import org.firstinspires.ftc.library.command.Commands;
 import org.firstinspires.ftc.library.command.SubsystemBase;
 import org.firstinspires.ftc.library.hardware.motors.MotorEx;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -48,15 +49,15 @@ private void setPower(double power) {
 }
 
 public Command intake (){
-    return runOnce(() -> setPower(IntakeConstants.intakingPower));
+    return Commands.runOnce(() -> setPower(IntakeConstants.intakingPower));
 }
 
 public Command outtake (){
-    return runOnce(() -> setPower(IntakeConstants.outtakingPower));
+    return Commands.runOnce(() -> setPower(IntakeConstants.outtakingPower));
 }
 
 public Command halt(){
-    return runOnce(() -> setPower(IntakeConstants.haltedPower));
+    return Commands.runOnce(() -> setPower(IntakeConstants.haltedPower));
 }
 }
 
