@@ -5,12 +5,12 @@ import com.bylazar.configurables.annotations.Configurable;
 @Configurable
 public class IntakeConstants {
 
-    public static final String ksubsystemName = "Intake";
+    public static final String kSubsystemName = "Intake";
 
     // Motor Names
 
-    public static final String firstIntakeMotorName = "firstIntakeMotor";
-    public static final String secondIntakeMotorName = "secondIntakeMotor";
+    public static final String kFirstIntakeMotorID = "firstIntakeMotor";
+    public static final String kSecondIntakeMotorID = "secondIntakeMotor";
 
     // Motor Specifications
     public static final double firstIntakeMotorRPM = 312;
